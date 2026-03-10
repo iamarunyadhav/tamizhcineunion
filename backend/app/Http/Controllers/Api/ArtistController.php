@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Artist;
 use App\Services\ArtistService;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class ArtistController extends Controller
 {
@@ -34,7 +35,10 @@ class ArtistController extends Controller
             'date_of_birth' => ['nullable', 'date'],
             'photo' => ['nullable', 'string', 'max:2048'],
             'cover_image' => ['nullable', 'string', 'max:2048'],
-            'category_id' => ['nullable', 'exists:artist_categories,id'],
+            'category_id' => [
+                'nullable',
+                Rule::exists('artist_categories', 'id')->whereNotNull('parent_id'),
+            ],
             'location' => ['nullable', 'string', 'max:255'],
             'bio' => ['nullable', 'string'],
             'skills' => ['nullable', 'array'],
@@ -57,7 +61,10 @@ class ArtistController extends Controller
             'date_of_birth' => ['nullable', 'date'],
             'photo' => ['nullable', 'string', 'max:2048'],
             'cover_image' => ['nullable', 'string', 'max:2048'],
-            'category_id' => ['nullable', 'exists:artist_categories,id'],
+            'category_id' => [
+                'nullable',
+                Rule::exists('artist_categories', 'id')->whereNotNull('parent_id'),
+            ],
             'location' => ['nullable', 'string', 'max:255'],
             'bio' => ['nullable', 'string'],
             'skills' => ['nullable', 'array'],

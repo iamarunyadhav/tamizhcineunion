@@ -17,13 +17,24 @@ class ArtistRepository extends BaseRepository
         $query = $this->query()->with(['category.parent']);
 
         if (!empty($filters['search'])) {
-            $query->where('name', 'like', '%'.$filters['search'].'%')
-                ->orWhere('bio', 'like', '%'.$filters['search'].'%');
+            $query->where(function (Builder $artistQuery) use ($filters) {
+                $artistQuery
+                    ->where('name', 'like', '%'.$filters['search'].'%')
+                    ->orWhere('bio', 'like', '%'.$filters['search'].'%');
+            });
         }
 
         if (!empty($filters['category'])) {
-            $query->whereHas('category', function (Builder $q) use ($filters) {
-                $q->where('slug', $filters['category'])->orWhere('id', $filters['category']);
+            $query->where(function (Builder $artistQuery) use ($filters) {
+                $artistQuery
+                    ->whereHas('category', function (Builder $q) use ($filters) {
+                        $q->where('slug', $filters['category'])
+                            ->orWhere('id', $filters['category']);
+                    })
+                    ->orWhereHas('category.parent', function (Builder $q) use ($filters) {
+                        $q->where('slug', $filters['category'])
+                            ->orWhere('id', $filters['category']);
+                    });
             });
         }
 
@@ -33,8 +44,8 @@ class ArtistRepository extends BaseRepository
             });
         }
 
-        if (!empty($filters['featured'])) {
-            $query->where('featured', true);
+        if (array_key_exists('featured', $filters) && $filters['featured'] !== null && $filters['featured'] !== '') {
+            $query->where('featured', filter_var($filters['featured'], FILTER_VALIDATE_BOOLEAN));
         }
 
         return $query->orderByDesc('created_at');

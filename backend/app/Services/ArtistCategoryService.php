@@ -17,6 +17,7 @@ class ArtistCategoryService
         return $this->repository->query()
             ->with('children')
             ->whereNull('parent_id')
+            ->orderBy('sort_order')
             ->orderBy('name')
             ->get();
     }

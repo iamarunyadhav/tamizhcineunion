@@ -17,6 +17,11 @@ class ArtistCategory extends Model
         'name',
         'slug',
         'parent_id',
+        'sort_order',
+    ];
+
+    protected $casts = [
+        'sort_order' => 'integer',
     ];
 
     public function artists()
@@ -31,6 +36,8 @@ class ArtistCategory extends Model
 
     public function children()
     {
-        return $this->hasMany(self::class, 'parent_id')->orderBy('name');
+        return $this->hasMany(self::class, 'parent_id')
+            ->orderBy('sort_order')
+            ->orderBy('name');
     }
 }

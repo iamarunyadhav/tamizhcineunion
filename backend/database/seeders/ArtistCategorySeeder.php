@@ -199,18 +199,23 @@ class ArtistCategorySeeder extends Seeder
             ],
         ];
 
-        foreach ($categories as $group) {
+        foreach ($categories as $groupIndex => $group) {
             $parent = ArtistCategory::updateOrCreate(
                 ['slug' => $group['slug']],
-                ['name' => $group['name'], 'parent_id' => null]
+                [
+                    'name' => $group['name'],
+                    'parent_id' => null,
+                    'sort_order' => $groupIndex + 1,
+                ]
             );
 
-            foreach ($group['children'] as $childName) {
+            foreach ($group['children'] as $childIndex => $childName) {
                 ArtistCategory::updateOrCreate(
                     ['slug' => Str::slug($childName)],
                     [
                         'name' => $childName,
                         'parent_id' => $parent->id,
+                        'sort_order' => $childIndex + 1,
                     ]
                 );
             }

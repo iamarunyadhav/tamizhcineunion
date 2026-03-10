@@ -24,6 +24,7 @@ class ArtistCategoryController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'slug' => ['nullable', 'string', 'max:255', 'unique:artist_categories,slug'],
             'parent_id' => ['nullable', 'exists:artist_categories,id'],
+            'sort_order' => ['nullable', 'integer', 'min:0'],
         ]);
 
         $category = $this->service->create($data);
@@ -37,6 +38,7 @@ class ArtistCategoryController extends Controller
             'name' => ['sometimes', 'string', 'max:255'],
             'slug' => ['nullable', 'string', 'max:255', 'unique:artist_categories,slug,'.$artistCategory->id.',id'],
             'parent_id' => ['nullable', 'exists:artist_categories,id'],
+            'sort_order' => ['nullable', 'integer', 'min:0'],
         ]);
 
         $category = $this->service->update($artistCategory, $data);
